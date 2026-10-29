@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Interactive map of the Iditarod National Historic Trail | Iditarod Historic Trail Alliance</title>
+<meta content="An interactive, stop-by-stop map of the Iditarod National Historic Trail from Seward to Nome — communities, shelter cabins, roadhouses and passport stamps." name="description"/>
+<link href="https://www.iditarod100.org/trail-map.html" rel="canonical"/>
+<meta content="website" property="og:type"/>
+<meta content="Iditarod Historic Trail Alliance" property="og:site_name"/>
+<meta content="Interactive map of the Iditarod National Historic Trail" property="og:title"/>
+<meta content="An interactive, stop-by-stop map of the Iditarod National Historic Trail from Seward to Nome — communities, shelter cabins, roadhouses and passport stamps." property="og:description"/>
+<meta content="https://www.iditarod100.org/assets/img/aerial-team.jpg" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="#3d0f1c" name="theme-color"/>
+<link href="assets/img/tripod-mark.svg" rel="icon" type="image/svg+xml"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="assets/vendor/maplibre-gl.css" rel="stylesheet"/>
+<link href="assets/css/base.css" rel="stylesheet"/>
+<style>
+
+body{background:#1d2a33}
+.journey{position:relative}
+.journey-map{position:fixed;top:var(--header-h);left:0;right:0;height:calc(100vh - var(--header-h));z-index:0;background:#1d2a33}
+.map-canvas{position:absolute;inset:0}
+.map-vignette{position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(120% 100% at 30% 50%,rgba(26,8,14,0) 50%,rgba(26,8,14,.45))}
+.maplibregl-ctrl-bottom-right{z-index:9;padding-right:84px}
+.maplibregl-ctrl-attrib{background:rgba(26,8,14,.65);color:#f4ead8;font-size:10.5px}
+.maplibregl-ctrl-attrib a{color:#f4ead8}
+.map-ui{position:absolute;inset:0;z-index:5;pointer-events:none}
+.map-ui .container{position:relative;height:100%}
+.journey-intro{position:absolute;top:12vh;left:var(--gutter);width:min(520px,46%);pointer-events:auto;background:rgba(26,8,14,.82);backdrop-filter:blur(6px);
+  border-radius:var(--r-lg);padding:30px 32px;color:rgba(255,248,236,.9);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.journey-intro.is-past{opacity:0;transform:translateY(-16px);pointer-events:none}
+.journey-intro h1{color:#fff8ea;font-size:clamp(32px,3.6vw,50px)}
+.journey-intro p{margin-top:14px;font-size:17px;line-height:1.6}
+.journey-intro .scroll-cue svg{width:16px;height:16px}
+.journey-intro .scroll-cue{display:inline-flex;align-items:center;gap:10px;margin-top:20px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--c-gold)}
+.journey-intro .jump{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+.journey-intro .jump a{font-size:14px;color:#fff;text-decoration:underline;text-underline-offset:3px}
+.map-note{position:absolute;left:var(--gutter);bottom:22px;max-width:360px;pointer-events:auto;font-size:12px;line-height:1.5;color:rgba(255,255,255,.82);
+  background:rgba(26,8,14,.72);border:1px solid rgba(255,255,255,.14);border-radius:var(--r-sm);padding:8px 11px}
+.map-note b{color:#fff}
+.progress-rail{position:absolute;left:var(--gutter);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;pointer-events:auto;transition:opacity .4s}
+.progress-rail.is-hidden{opacity:0;pointer-events:none}
+.progress-rail button{width:32px;height:32px;border-radius:50%;font-size:12.5px;font-weight:700;color:#fff;border:1px solid rgba(255,255,255,.45);background:rgba(26,8,14,.88)}
+.progress-rail button:hover{color:#fff;border-color:#fff}
+.progress-rail button[aria-current="true"]{background:var(--c-gold);border-color:var(--c-gold);color:var(--c-brand-ink)}
+.journey-steps{position:relative;z-index:4;pointer-events:none}
+.step{min-height:110vh;display:flex;align-items:center;justify-content:flex-end;padding-top:var(--header-h)}
+.step .container{display:flex;justify-content:flex-end}
+.step--intro{min-height:100vh}
+.step--outro{min-height:80vh}
+.stop-card{width:min(470px,100%);pointer-events:auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 26px 60px rgba(0,0,0,.45);
+  opacity:.25;transform:translateY(24px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.step.is-active .stop-card{opacity:1;transform:none}
+.stop-shot{position:relative;height:clamp(150px,24vh,250px);background:var(--c-ice)}
+.stop-shot img{width:100%;height:100%;object-fit:cover}
+.stop-shot .credit{position:absolute;right:8px;bottom:6px;font-size:10.5px;color:#fff;text-shadow:0 1px 3px #000}
+.stop-body{padding:22px 26px 26px}
+.stop-head{display:flex;align-items:center;gap:14px}
+.stop-num{width:38px;height:38px;flex-shrink:0;border-radius:50%;background:var(--c-brand);color:#fff;display:grid;place-items:center;font-weight:800}
+.stop-name{font-size:clamp(22px,2vw,28px)}
+.stop-kind{display:block;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted);margin-top:4px}
+.stop-desc{margin-top:14px;font-size:16px;line-height:1.6}
+.stop-meta{margin-top:14px;display:flex;flex-direction:column;gap:8px;font-size:14.5px;line-height:1.5}
+.stop-meta li{display:flex;gap:10px}
+.stop-meta svg{width:18px;height:18px;flex-shrink:0;color:var(--c-brand);margin-top:1px}
+.stop-meta b{color:var(--c-ink)}
+.stop-cta{display:flex;flex-wrap:wrap;gap:18px;margin-top:18px}
+.journey-outro{width:min(560px,100%);pointer-events:auto;background:#fff;border-radius:var(--r-lg);padding:28px 30px;box-shadow:0 26px 60px rgba(0,0,0,.4)}
+.journey-outro h2{font-size:28px}
+.journey-outro p{margin-top:12px}
+.mk{width:34px;height:34px;border-radius:50%;cursor:pointer;background:var(--c-gold);color:var(--c-brand-ink);border:2px solid #fff;display:grid;place-items:center;
+  font-weight:800;font-size:13px;box-shadow:0 3px 12px rgba(0,0,0,.5);transition:transform .3s var(--ease)}
+.mk:hover{transform:scale(1.15)}
+.mk:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.mk.is-active{background:var(--c-brand);color:#fff;transform:scale(1.25);box-shadow:0 0 0 8px rgba(233,185,73,.35),0 6px 20px rgba(0,0,0,.5)}
+.mountain-band{position:relative;z-index:3;background:transparent}
+.footer{position:relative;z-index:3}
+@media (max-width:860px){
+  .journey-intro{left:var(--gutter);right:var(--gutter);width:auto;top:calc(var(--header-h) + 3vh);padding:22px}
+  .journey-intro p{font-size:15.5px}
+  .progress-rail{display:none}
+  .map-note{top:auto;bottom:10px;right:var(--gutter);max-width:none;font-size:11px}
+  .step{align-items:flex-end;padding-bottom:9vh}
+  .stop-shot{height:120px}
+  .stop-body{padding:16px 18px 18px}
+  .stop-desc{font-size:15px}
+  .maplibregl-ctrl-bottom-right{padding-right:0;bottom:60px}
+}
+@media (prefers-reduced-motion:reduce){.stop-card{opacity:1;transform:none}}
+
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "Interactive map of the Iditarod National Historic Trail", "description": "An interactive, stop-by-stop map of the Iditarod National Historic Trail from Seward to Nome \u2014 communities, shelter cabins, roadhouses and passport stamps.", "isPartOf": {"@type": "WebSite", "name": "Iditarod Historic Trail Alliance", "url": "https://www.iditarod100.org"}}</script>
+</head>
+<body class="page-light page-map" data-page="trail-map">
+<a class="skip" href="#main">Skip to content</a>
+<header class="header" id="header">
+<div class="container">
+<a aria-label="Iditarod Historic Trail Alliance — home" class="logo" href="index.html"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" viewbox="0 0 100 100"><path d="M57 59 L82 86 L57 86 Z" fill="currentColor" opacity=".35" stroke="none"></path><path d="M22 16 L84 86" stroke-width="7.5"></path><path d="M57 18 L57 87" stroke-width="7.5"></path><path d="M71 40 L19 87" stroke-width="7.5"></path></svg><span class="logo-words"><b>Iditarod</b><span>Historic Trail Alliance</span></span></a>
+<nav aria-label="Main">
+<ul class="nav" id="nav">
+<li class="nav-item is-current">
+<div class="nav-top"><a class="is-unlinked">Plan a Trip</a>
+<button aria-controls="menu-plan" aria-expanded="false" aria-label="Plan a Trip pages" class="nav-toggle" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></button></div>
+<ul class="nav-menu" id="menu-plan"><li><a aria-current="page" href="trail-map.html">Interactive trail map<small>Seward to Nome, stop by stop</small></a></li><li><a class="is-unlinked">Visitor guide<small>Seasons, safety, who manages what</small></a></li><li><a class="is-unlinked">Recreation info<small>Ways to travel the trail</small></a></li><li><a class="is-unlinked">Passport program<small>Nine stamp locations</small></a></li><li><a class="is-unlinked">Auto tour<small>Drive the southern trail</small></a></li><li><a class="is-unlinked">Places to visit<small>Museums, cabins and landmarks</small></a></li><li><a class="is-unlinked">Partner sites<small>Land managers and trip planners</small></a></li></ul>
+</li>
+<li class="nav-item">
+<div class="nav-top"><a class="is-unlinked">Learn</a>
+<button aria-controls="menu-learn" aria-expanded="false" aria-label="Learn pages" class="nav-toggle" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></button></div>
+<ul class="nav-menu" id="menu-learn"><li><a class="is-unlinked">Explore the history<small>From Native trails to the serum run</small></a></li><li><a class="is-unlinked">Records &amp; stories<small>Diaries, documents and photographs</small></a></li><li><a class="is-unlinked">Project Jukebox<small>Oral histories of the trail</small></a></li><li><a class="is-unlinked">INHT books<small>Available through the store</small></a></li><li><a class="is-unlinked">For kids<small>Become a Junior Trailblazer</small></a></li><li><a class="is-unlinked">For educators<small>iTREC! and professional development</small></a></li></ul>
+</li>
+<li class="nav-item">
+<div class="nav-top"><a class="is-unlinked">Get Involved</a>
+<button aria-controls="menu-involved" aria-expanded="false" aria-label="Get Involved pages" class="nav-toggle" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></button></div>
+<ul class="nav-menu" id="menu-involved"><li><a class="is-unlinked">Grants<small>Support for trail communities</small></a></li><li><a class="is-unlinked">Gateway communities<small>The towns and villages on the trail</small></a></li><li><a class="is-unlinked">Stewardship work<small>Projects and volunteering</small></a></li><li><a class="is-unlinked">Workshops<small>Training and gatherings</small></a></li><li><a class="is-unlinked">Donate<small>Give once or monthly</small></a></li><li><a class="is-unlinked">Membership<small>Join or renew</small></a></li></ul>
+</li>
+<li class="nav-item">
+<div class="nav-top"><a class="is-unlinked">About Us</a>
+<button aria-controls="menu-about" aria-expanded="false" aria-label="About Us pages" class="nav-toggle" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></button></div>
+<ul class="nav-menu" id="menu-about"><li><a class="is-unlinked">Staff &amp; board<small>Who runs the Alliance</small></a></li><li><a class="is-unlinked">Annual reports &amp; newsletters<small>The Tripod and yearly reports</small></a></li><li><a class="is-unlinked">Partners<small>Agencies and trail groups</small></a></li><li><a class="is-unlinked">Media package<small>Facts, logos and photos</small></a></li><li><a class="is-unlinked">Contact us<small>Email, mail and social</small></a></li></ul>
+</li>
+<li class="nav-item">
+<div class="nav-top"><a class="is-unlinked">Store</a>
+<button aria-controls="menu-store" aria-expanded="false" aria-label="Store pages" class="nav-toggle" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></button></div>
+<ul class="nav-menu" id="menu-store"><li><a class="is-unlinked">Merchandise<small>Posters, patches, pins, maps</small></a></li><li><a class="is-unlinked">Books &amp; media<small>Histories and reports</small></a></li><li><a class="is-unlinked">Donations<small>Support the trail</small></a></li><li><a class="is-unlinked">Membership<small>From $10 a year</small></a></li></ul>
+</li>
+<li class="nav-mobile-cta"><a class="is-unlinked btn btn--gold">Donate <svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></a></li>
+</ul>
+</nav>
+<div class="header-right">
+<button aria-label="Search the site" class="icon-btn" id="searchOpen" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></button>
+<a aria-label="Cart" class="icon-btn" data-cart-label="" data-open-cart="" href="#"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M3 4h2.2l2.3 11.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6.1"></path><circle cx="9.5" cy="20" r="1.3"></circle><circle cx="17.5" cy="20" r="1.3"></circle></svg><span class="cart-count" hidden="">0</span></a>
+<a class="is-unlinked btn btn--gold">Donate</a>
+<button aria-controls="nav" aria-expanded="false" aria-label="Open menu" class="burger" id="burger" type="button"><span></span></button>
+</div>
+</div>
+</header>
+<div aria-label="Search the site" aria-modal="true" class="search-panel" hidden="" id="searchPanel" role="dialog">
+<button class="close icon-btn" id="searchClose" type="button"><span class="close-label">Close</span><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 4l16 16M20 4 4 20"></path></svg></button>
+<form onsubmit="return false" role="search">
+<label class="sr-only" for="searchInput">Search the site</label>
+<input aria-autocomplete="list" aria-controls="searchResults" aria-expanded="true" autocomplete="off" id="searchInput" placeholder="Search places, history, programs…" role="combobox" type="search"/>
+</form>
+<div aria-label="Search results" class="search-results" id="searchResults" role="listbox"></div>
+</div>
+<main id="main" tabindex="-1">
+<section aria-labelledby="mapTitle" class="journey" id="journey">
+<div class="journey-map">
+<div aria-label="Satellite map of the Iditarod National Historic Trail. Each stop below is also listed as text." class="map-canvas" id="map" role="region"></div>
+<div aria-hidden="true" class="map-vignette"></div>
+<div class="map-ui"><div class="container">
+<div class="journey-intro" id="journeyIntro">
+<nav aria-label="Breadcrumb"><p class="crumb"><a href="index.html">Home</a> <span aria-hidden="true">/</span> <span aria-current="page">Trail map</span></p></nav>
+<h1 id="mapTitle">Seward to Nome, stop by stop</h1>
+<p>A thousand miles of main trail, from tidewater on Resurrection Bay across the Alaska Range and the Yukon to the Bering Sea.
+          Scroll to travel north, or pick a stop.</p>
+<span class="scroll-cue"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 4v15M6 13l6 6 6-6"></path></svg> Scroll to travel the trail</span>
+<div aria-label="Jump to a stop" class="jump" id="jumpList"></div>
+</div>
+<nav aria-label="Trail stops" class="progress-rail is-hidden" id="progressRail"></nav>
+<p class="map-note" id="mapNote"><b>Loading the trail…</b></p>
+</div></div>
+</div>
+<div class="journey-steps" id="journeySteps"></div>
+</section>
+<noscript><div class="container" style="padding:140px 0 60px;background:#fff"><p>The interactive map needs JavaScript. Every stop is also listed on the Gateway Communities page.</p></div></noscript>
+</main>
+<div aria-hidden="true" class="mountain-band"><div class="mtn-layer" id="mtnFront"></div></div>
+<footer class="footer" id="footer">
+<div class="container">
+<div class="footer-top">
+<div>
+<a aria-label="Iditarod Historic Trail Alliance — home" class="logo" href="index.html"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" viewbox="0 0 100 100"><path d="M57 59 L82 86 L57 86 Z" fill="currentColor" opacity=".35" stroke="none"></path><path d="M22 16 L84 86" stroke-width="7.5"></path><path d="M57 18 L57 87" stroke-width="7.5"></path><path d="M71 40 L19 87" stroke-width="7.5"></path></svg><span class="logo-words"><b>Iditarod</b><span>Historic Trail Alliance</span></span></a>
+<p class="footer-about">A statewide nonprofit, founded in 1999, working to protect, promote and tell the story of the
+          Iditarod National Historic Trail — America’s only winter National Historic Trail.</p>
+<address class="footer-addr">3705 Arctic Blvd #272<br/>Anchorage, AK 99503-5774<br/><a href="mailto:iditarodHTA@gmail.com">iditarodHTA@gmail.com</a></address>
+<div class="footer-social"><a aria-label="Facebook — opens in a new tab" href="https://www.facebook.com/pages/Iditarod-Historic-Trail-Alliance/256283077768223" rel="noopener" target="_blank"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M14 21v-8h2.8l.4-3H14V8.2c0-.9.3-1.5 1.5-1.5H17V4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3V10H7.6v3h2.7v8Z" fill="currentColor" stroke="none"></path></svg></a><a aria-label="X (formerly Twitter) — opens in a new tab" href="https://twitter.com/IditarodHTA" rel="noopener" target="_blank"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 4l16 16M20 4 4 20"></path></svg></a><a aria-label="YouTube — opens in a new tab" href="https://www.youtube.com/channel/UC6IUgrchuWRNEVMFchfDXqA" rel="noopener" target="_blank"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15V9l5 3Z" fill="currentColor" stroke="none"></path></svg></a></div>
+</div>
+<nav aria-label="Footer" class="footer-cols"><div><h2>Plan a Trip</h2><ul><li><a href="trail-map.html">Interactive trail map</a></li><li><a class="is-unlinked">Visitor guide</a></li><li><a class="is-unlinked">Recreation info</a></li><li><a class="is-unlinked">Passport program</a></li><li><a class="is-unlinked">Auto tour</a></li><li><a class="is-unlinked">Places to visit</a></li></ul></div><div><h2>Learn</h2><ul><li><a class="is-unlinked">Explore the history</a></li><li><a class="is-unlinked">Records &amp; stories</a></li><li><a class="is-unlinked">Project Jukebox</a></li><li><a class="is-unlinked">INHT books</a></li><li><a class="is-unlinked">For kids</a></li><li><a class="is-unlinked">For educators</a></li></ul></div><div><h2>Get Involved</h2><ul><li><a class="is-unlinked">Grants</a></li><li><a class="is-unlinked">Gateway communities</a></li><li><a class="is-unlinked">Stewardship work</a></li><li><a class="is-unlinked">Workshops</a></li><li><a class="is-unlinked">Donate</a></li><li><a class="is-unlinked">Membership</a></li></ul></div><div><h2>About Us</h2><ul><li><a class="is-unlinked">Staff &amp; board</a></li><li><a class="is-unlinked">Annual reports &amp; newsletters</a></li><li><a class="is-unlinked">Partners</a></li><li><a class="is-unlinked">Media package</a></li><li><a class="is-unlinked">Contact us</a></li></ul></div><div><h2>Store</h2><ul><li><a class="is-unlinked">Merchandise</a></li><li><a class="is-unlinked">Books &amp; media</a></li><li><a class="is-unlinked">Donations</a></li><li><a class="is-unlinked">Membership</a></li></ul></div></nav>
+</div>
+<div class="footer-news">
+<div><h2>Get The Tripod in your inbox</h2>
+<p>Trail news, stewardship updates and a story from the archive — a few times a year.</p></div>
+<form class="newsletter-form" data-form="newsletter" data-subject="Newsletter sign-up">
+<div class="newsletter">
+<label class="sr-only" for="nlEmail">Email address</label>
+<input autocomplete="email" data-label="Email" id="nlEmail" name="email" placeholder="Your email address" required="" type="email"/>
+<input name="list" type="hidden" value="The Tripod newsletter"/>
+<button class="btn btn--gold" type="submit">Subscribe</button>
+</div>
+<p class="err newsletter-msg" data-for="nlEmail" role="status"></p>
+<p class="newsletter-note">We never share your address. Unsubscribe at any time.</p>
+</form>
+</div>
+<div class="footer-powered"><span>Website designed by</span>
+<a aria-label="Compunnel Digital — opens in a new tab" href="https://digital.compunnel.com" rel="noopener" target="_blank"><img alt="Compunnel Digital" height="56" src="assets/img/compunnel-digital.svg" width="132"/></a></div>
+<div class="footer-bottom">
+<div><p>© <span id="year">2026</span> Iditarod National Historic Trail, Inc., dba Iditarod Historic Trail Alliance. All rights reserved.</p>
+<p class="footer-fund">The Alliance does not discriminate on the basis of race, color, national origin, sex, disability, age or other protected status.
+          This website is funded in part through a federal financial assistance award.</p></div>
+<nav aria-label="Legal"><a class="is-unlinked">Privacy</a><a class="is-unlinked">Terms</a><a class="is-unlinked">Accessibility</a><a class="is-unlinked">Photo credits</a><a class="is-unlinked">Site map</a></nav>
+</div>
+</div>
+</footer>
+<script src="assets/js/store-data.js"></script>
+<script defer="" src="assets/js/search-index.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/unlink.js"></script>
+<script src="assets/vendor/maplibre-gl.js"></script>
+<script src="assets/js/trail-data.js"></script>
+<script src="assets/js/map-engine.js"></script>
+<script src="assets/js/trail-map.js"></script>
+</body>
+</html>

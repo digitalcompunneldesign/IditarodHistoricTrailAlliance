@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Iditarod Historic Trail Alliance — Iditarod National Historic Trail, Seward to Nome</title>
+<meta content="Plan a trip, learn the history and help protect the Iditarod National Historic Trail — America’s only winter National Historic Trail, from Seward to Nome." name="description"/>
+<link href="https://www.iditarod100.org/index.html" rel="canonical"/>
+<meta content="website" property="og:type"/>
+<meta content="Iditarod Historic Trail Alliance" property="og:site_name"/>
+<meta content="Iditarod Historic Trail Alliance — Iditarod National Historic Trail, Seward to Nome" property="og:title"/>
+<meta content="Plan a trip, learn the history and help protect the Iditarod National Historic Trail — America’s only winter National Historic Trail, from Seward to Nome." property="og:description"/>
+<meta content="https://www.iditarod100.org/assets/img/hero-spruce.jpg" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="#3d0f1c" name="theme-color"/>
+<link href="assets/img/tripod-mark.svg" rel="icon" type="image/svg+xml"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="assets/vendor/maplibre-gl.css" rel="stylesheet"/>
+<link href="assets/css/base.css" rel="stylesheet"/>
+<style>
+/* ============ HERO (template) — photographs instead of video ============ */
+.hero{position:relative;min-height:640px;height:clamp(600px,92vh,820px);display:flex;align-items:center;overflow:hidden;background:#1c1a1b}
+.hero-media{position:absolute;inset:0}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 1400ms var(--ease)}
+.hero-slide.is-active{opacity:1}
+.hero-slide img{width:100%;height:100%;object-fit:cover;transform:scale(1.06)}
+.hero-slide.is-active img{animation:kenburns 11s linear forwards}
+.hero.is-paused .hero-slide.is-active img{animation-play-state:paused}
+@keyframes kenburns{from{transform:scale(1.04)}to{transform:scale(1.14)}}
+.hero-overlay{position:absolute;inset:0;background:
+  linear-gradient(180deg,rgba(26,10,16,.62) 0%,rgba(26,10,16,.2) 34%,rgba(26,10,16,.42) 72%,rgba(26,10,16,.66) 100%),
+  radial-gradient(120% 80% at 18% 50%,rgba(26,10,16,.55) 0%,rgba(26,10,16,0) 62%)}
+.hero > .container{position:relative;z-index:2;padding-top:var(--header-h)}
+.hero-kicker{display:block;margin-bottom:16px;font-size:14px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--c-gold)}
+.hero-title{font-weight:700;text-transform:uppercase;color:#fbebcd;font-size:clamp(32px,4.2vw,60px);line-height:1.12;letter-spacing:.3px;text-shadow:0 2px 26px rgba(0,0,0,.28)}
+.hero-lede{margin-top:20px;max-width:600px;color:rgba(255,248,236,.94);font-size:clamp(16px,1.45vw,20px);line-height:1.55}
+.hero .btn-row{margin-top:32px}
+.btn-solid{display:inline-flex;align-items:center;gap:10px;height:50px;padding:0 26px;border-radius:var(--r-sm);background:#fff;color:#1d1d1d;
+  font-size:13.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 10px 26px rgba(0,0,0,.22);transition:transform var(--t-fast) var(--ease)}
+.btn-solid svg{width:15px;height:15px}
+.btn-solid:hover{transform:translateY(-2px)}
+.hero-controls{position:absolute;right:28px;bottom:34px;z-index:4;display:flex;gap:10px}
+.hero-pause{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.92);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:9px 14px;border:1px solid rgba(255,255,255,.45);border-radius:var(--r-full)}
+.hero-pause:hover{background:rgba(255,255,255,.14)}
+.hero-pause svg{width:10px;height:10px}
+.hero-credit{position:absolute;left:28px;bottom:30px;z-index:4;font-size:11.5px;color:rgba(255,255,255,.8)}
+/* three slanted sticks that read as a small mountain range — one per photo */
+.hero-bars{position:absolute;left:50%;transform:translateX(-50%);bottom:38px;z-index:3;display:flex;align-items:flex-end;gap:6px}
+.hero-bars button{width:24px;padding:0 5px;background-clip:content-box;border-radius:8px;background-color:rgba(255,255,255,.4);overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.34)}
+.hero-bars button:nth-child(1){height:34px;transform:skewX(16deg)}
+.hero-bars button:nth-child(2){height:66px}
+.hero-bars button:nth-child(3){height:42px;transform:skewX(-16deg)}
+.hero-bars button:hover{background-color:rgba(255,255,255,.65)}
+.hero-bars button[aria-current="true"]{background-color:#fff}
+.hero-bars button b{display:block;height:100%;width:100%;border-radius:5px;background:var(--c-gold);transform:scaleY(0);transform-origin:bottom}
+.hero-bars button[aria-current="true"] b{transform:scaleY(1);transition:transform 7s linear}
+.hero.is-paused .hero-bars b{transition:none}
+
+/* ============ ANNOUNCEMENTS ============ */
+.announce{background:var(--c-beige);padding:30px 0;border-bottom:1px solid #f0e2c4}
+.announce-grid{display:grid;grid-template-columns:auto repeat(3,1fr);gap:26px;align-items:center}
+.announce h2{font-size:13.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--c-brand);display:flex;gap:10px;align-items:center;padding-right:18px;border-right:1px solid #e6d3ad}
+.announce h2 svg{width:20px;height:20px}
+.ann span{display:block;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-muted)}
+.ann a{display:block;margin-top:5px;font-weight:600;color:var(--c-ink);line-height:1.4;text-decoration:underline;text-decoration-color:rgba(110,31,53,.35);text-underline-offset:4px}
+.ann a:hover{text-decoration-color:var(--c-brand)}
+
+/* ============ INTRO ============ */
+.intro-band{padding:84px 0 10px;text-align:center}
+.intro-band .sec-title{font-size:clamp(30px,3.8vw,48px)}
+.chapter-chips{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:26px}
+.chapter-chips a{padding:10px 18px;border-radius:var(--r-full);border:1px solid #b4b4b4;font-weight:600;font-size:15px;color:var(--c-ink)}
+.chapter-chips a:hover{border-color:var(--c-brand);color:var(--c-brand)}
+.chapter-chips b{color:var(--c-brand);margin-right:6px}
+
+/* ============ CATEGORIES (template) — Multiple uses ============ */
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.cat-card{display:flex;flex-direction:column;justify-content:space-between;min-height:198px;padding:26px 24px;background:#fff;border:1px solid #b4b4b4;border-radius:var(--r-md);
+  transition:transform var(--t-fast) var(--ease),box-shadow var(--t-fast) var(--ease),border-color var(--t-fast)}
+.cat-icon{width:48px;height:48px;object-fit:contain;transition:transform var(--t-fast) var(--ease)}
+svg.cat-icon{color:#2b2b2b}
+.cat-card h3{font-size:clamp(15px,1.3vw,19px);font-weight:500;line-height:1.3;color:#4e4c51;text-transform:none;letter-spacing:0}
+.cat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-sm);border-color:#8d8d8d}
+.cat-card:hover .cat-icon{transform:scale(1.09)}
+.cat-viewall{display:flex;align-items:center;justify-content:center}
+
+/* ============ 3D GALLERY (template) — Locations & landscapes ============ */
+.explore{background:var(--c-green-bg);padding:78px 0 58px;overflow:hidden}
+.explore .sec-head{margin-bottom:14px}
+.stage{position:relative;height:548px;margin-top:6px;perspective:1500px;perspective-origin:50% 45%;touch-action:pan-y}
+.stage:focus-visible{outline-offset:-6px}
+.stage-inner{position:absolute;inset:0;transform-style:preserve-3d}
+.slide3d{position:absolute;top:50%;left:50%;width:404px;height:470px;margin:-235px 0 0 -202px;clip-path:url(#galleryArc);overflow:hidden;background:#d8d2c8;
+  box-shadow:0 24px 50px rgba(24,20,28,.2);transform-style:preserve-3d;backface-visibility:hidden;cursor:pointer;
+  transition:transform var(--t-slow) var(--ease-cine),opacity var(--t-slow) var(--ease-cine);will-change:transform,opacity}
+.slide3d img{width:100%;height:100%;object-fit:cover}
+.slide3d::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.5));opacity:0;transition:opacity var(--t-base)}
+.slide3d.is-center::after{opacity:1}
+.slide3d figcaption{position:absolute;left:18px;right:18px;bottom:24px;z-index:2;color:#fff;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:0;transition:opacity var(--t-base)}
+.slide3d.is-center figcaption{opacity:1}
+.stage-nav{display:flex;gap:16px;justify-content:center;margin-top:14px}
+.nav-round{width:54px;height:54px;border-radius:var(--r-full);display:grid;place-items:center;background:#fff;color:#5c6360;border:1px solid rgba(0,0,0,.08);box-shadow:0 4px 12px rgba(24,20,28,.12);transition:all var(--t-fast)}
+.nav-round svg{width:20px;height:20px}
+.nav-round.is-dark{background:var(--c-brand);color:#fff;border-color:var(--c-brand)}
+.nav-round:hover{transform:translateY(-2px)}
+.nav-round:not(.is-dark):hover{background:var(--c-brand);color:#fff}
+
+/* ============ ROUTE MAP (template) ============ */
+.route-wrap{display:grid;grid-template-columns:1fr 340px;gap:32px;align-items:stretch}
+.route-map{position:relative;min-height:480px;border-radius:var(--r-lg);overflow:hidden;background:#1d2a33;border:1px solid #b4b4b4}
+.route-map .map{position:absolute;inset:0}
+.route-side{display:flex;flex-direction:column}
+.route-legend{border-top:1px solid var(--c-line)}
+.route-legend li{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid var(--c-line);font-size:16px;color:var(--c-ink)}
+.route-legend i{width:12px;height:12px;border-radius:50%;background:var(--c-gold);box-shadow:0 0 0 2px #fff,0 0 0 3px #c9a23a;flex:0 0 auto}
+.route-legend b{margin-left:auto;font-size:14px;color:var(--c-body);font-weight:600;text-align:right}
+.route-total{margin-top:20px;font-size:15px}
+.route-total b{display:block;font-size:16px;color:var(--c-ink)}
+.route-side .btn{margin-top:auto;align-self:flex-start}
+.route-note{margin-top:14px;font-size:12.5px;line-height:1.5;color:var(--c-muted)}
+.mini-pin{display:grid;place-items:center;width:24px;height:24px}
+.mini-pin::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--c-gold);border:2px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.5);box-sizing:border-box;transition:transform .2s}
+.mini-pin:hover::before,.mini-pin:focus-visible::before{transform:scale(1.3)}
+.mini-pin span{display:none}
+
+/* ============ EVENTS CAROUSEL (template) — History ============ */
+.events-viewport{overflow:hidden;margin-top:38px;padding-bottom:34px;padding-left:max(var(--gutter),calc((100vw - var(--container))/2 + var(--gutter)));cursor:grab}
+.events-viewport.is-dragging{cursor:grabbing}
+.events-track{display:flex;gap:22px;will-change:transform;margin:0;padding:0}
+.event-card{flex:0 0 348px;width:348px;background:#fff;border-radius:var(--r-md);box-shadow:0 8px 26px rgba(23,30,35,.1);overflow:hidden;display:flex;flex-direction:column;list-style:none}
+.event-card .thumb{height:196px;overflow:hidden;background:#eceff0}
+.event-card .thumb img{width:100%;height:100%;object-fit:cover;transition:transform 900ms var(--ease)}
+.event-card:hover .thumb img{transform:scale(1.05)}
+.event-body{padding:20px 22px 0;flex:1}
+.event-month{font-size:15px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--c-muted)}
+.event-day{font-size:40px;font-weight:700;color:var(--c-ink-strong);line-height:1.15;margin-top:3px}
+.event-title{font-size:20px;font-weight:600;color:#4e4c51;margin-top:14px;line-height:1.35;text-transform:none;letter-spacing:0}
+.event-loc{display:flex;align-items:center;gap:8px;margin-top:13px;font-size:15px}
+.event-loc svg{width:16px;height:16px;flex-shrink:0;color:var(--c-brand)}
+.event-foot{margin-top:18px;padding:14px 20px 18px;border-top:1px solid var(--c-line)}
+.events-hint{display:flex;align-items:center;gap:8px;justify-content:flex-end;max-width:var(--container);margin:4px auto 0;padding-inline:var(--gutter);
+  font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--c-muted)}
+.events-hint button{width:40px;height:40px;border-radius:var(--r-full);border:1px solid #b4b4b4;display:grid;place-items:center;color:#4a4f52;transition:all var(--t-fast)}
+.events-hint button svg{width:15px;height:15px}
+.events-hint button:hover:not(:disabled){background:var(--c-brand);color:#fff;border-color:var(--c-brand)}
+.events-hint button:disabled{opacity:.35;cursor:default}
+
+/* ============ SHOP CIRCLES (template accessories) ============ */
+.accessories{background:var(--c-blue-bg)}
+.acc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:12px}
+.acc-item{text-align:center}
+.acc-circle{width:min(320px,92%);aspect-ratio:1;margin:0 auto;border-radius:var(--r-full);background:#fff;display:grid;place-items:center;overflow:hidden;
+  box-shadow:0 10px 30px rgba(30,60,80,.07);transition:transform 420ms var(--ease),box-shadow 420ms var(--ease)}
+.acc-circle img{width:66%;height:66%;object-fit:contain;transition:transform 520ms var(--ease)}
+.acc-item:hover .acc-circle,.acc-item:focus-within .acc-circle{transform:scale(1.055);box-shadow:0 22px 46px rgba(30,60,80,.15)}
+.acc-item h3{margin-top:24px;font-size:20px;font-weight:600;color:#4e4c51;text-transform:none;letter-spacing:0}
+.acc-item .link-cta{margin-top:10px}
+
+/* ============ COMMUNITY WALL (template) — Communities ============ */
+.community-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;grid-auto-rows:206px;margin-top:34px}
+.ig-item{position:relative;overflow:hidden;background:#e9ecee;display:block}
+.ig-item img{width:100%;height:100%;object-fit:cover;transition:transform 900ms var(--ease)}
+.ig-item:hover img,.ig-item:focus-visible img{transform:scale(1.06)}
+.ig-ov{position:absolute;inset:0;z-index:1;display:flex;align-items:flex-end;padding:16px;color:#fff;font-size:14.5px;font-weight:700;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.72))}
+.ig-handle-row{text-align:center;margin-top:28px}
+
+/* ============ TIPS (template) ============ */
+.tips-cols{display:grid;grid-template-columns:1fr 1fr;gap:0 56px;max-width:1060px;margin:8px auto 0}
+.tip{display:flex;align-items:center;gap:16px;padding:17px 4px;border-bottom:1px solid var(--c-line)}
+.tip:hover{background:#fafbfa}
+.tip svg{width:22px;height:22px;flex-shrink:0}
+.tip > span{font-size:clamp(15px,1.35vw,19px);color:var(--c-ink)}
+.tip--extra{display:none}
+.tips-cols.show-all .tip--extra{display:flex}
+.tips-foot{text-align:center;margin-top:38px}
+#tipsToggle svg{transition:transform var(--t-fast)}
+#tipsToggle[aria-expanded="true"] svg{transform:rotate(90deg)}
+
+/* ============ GET INVOLVED + CONTACT ============ */
+.involve{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.involve a{position:relative;min-height:380px;display:flex;align-items:flex-end;padding:28px;color:#fff;overflow:hidden;border-radius:var(--r-md)}
+.involve img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 900ms var(--ease)}
+.involve a::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,10,16,.05),rgba(26,10,16,.86))}
+.involve a:hover img{transform:scale(1.05)}
+.involve div{position:relative;z-index:2}
+.involve h3{color:#fff;font-size:24px}
+.involve p{margin-top:8px;color:rgba(255,255,255,.94)}
+.involve .link-cta{color:var(--c-gold);margin-top:14px}
+.contact-strip{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:28px;align-items:start}
+.contact-strip h3{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-brand);display:flex;gap:8px;align-items:center}
+.contact-strip h3 svg{width:18px;height:18px}
+.contact-strip p,.contact-strip address{margin-top:10px;font-style:normal;line-height:1.6}
+
+/* ============ RESPONSIVE (re-stated last, as in the template) ============ */
+@media (max-width:1240px){.slide3d{width:340px;height:400px;margin:-200px 0 0 -170px}.stage{height:470px}}
+@media (max-width:1023px){
+  .cat-grid{grid-template-columns:repeat(3,1fr)}
+  .acc-grid{gap:24px}
+  .community-grid{grid-auto-rows:150px}
+  .stage{height:400px}
+  .slide3d{width:272px;height:322px;margin:-161px 0 0 -136px}
+  .announce-grid{grid-template-columns:1fr 1fr 1fr}
+  .announce h2{grid-column:1 / -1;border-right:0;padding:0}
+  .contact-strip{grid-template-columns:1fr 1fr}
+}
+@media (max-width:900px){.route-wrap{grid-template-columns:1fr}.route-map{min-height:360px}.route-side .btn{margin-top:22px}.involve{grid-template-columns:1fr}.involve a{min-height:280px}}
+@media (max-width:767px){
+  .hero{min-height:620px}
+  .hero-title br{display:none}
+  .hero-overlay{background:linear-gradient(180deg,rgba(26,10,16,.6),rgba(26,10,16,.58) 40%,rgba(26,10,16,.86))}
+  .hero-controls{right:16px;bottom:24px}
+  .hero-credit{display:none}
+  .hero-bars{left:var(--gutter);transform:none;bottom:26px}
+  .announce-grid{grid-template-columns:1fr;gap:16px}
+  .cat-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .cat-card{min-height:140px;padding:16px 14px}
+  .acc-grid{grid-template-columns:1fr;gap:34px}
+  .community-grid{grid-template-columns:repeat(6,1fr);grid-auto-rows:120px;gap:4px}
+  .community-grid .ig-item{grid-column:span 3 !important}
+  .community-grid .ig-item:nth-child(3n){grid-column:span 6 !important}
+  .stage{height:340px}
+  .slide3d{width:212px;height:252px;margin:-126px 0 0 -106px}
+  .event-card{flex:0 0 260px;width:260px}
+  .event-card .thumb{height:150px}
+  .tips-cols{grid-template-columns:1fr;gap:0}
+  .contact-strip{grid-template-columns:1fr}
+}
+
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "NGO", "name": "Iditarod Historic Trail Alliance", "legalName": "Iditarod National Historic Trail, Inc.", "url": "https://www.iditarod100.org", "email": "iditarodHTA@gmail.com", "foundingDate": "1999", "address": {"@type": "PostalAddress", "streetAddress": "3705 Arctic Blvd #272", "addressLocality": "Anchorage", "addressRegion": "AK", "postalCode": "99503-5774", "addressCountry": "US"}, "sameAs": ["https://www.facebook.com/pages/Iditarod-Historic-Trail-Alliance/256283077768223", "https://twitter.com/IditarodHTA", "https://www.youtube.com/channel/UC6IUgrchuWRNEVMFchfDXqA"]}</script>
+</head>
+<body class="" data-page="index">
+<a class="skip" href="#main">Skip to content</a>
+<header class="header" id="header">
+<div class="container">
+<a aria-label="Iditarod Historic Trail Alliance — home" class="logo" href="index.html"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" viewbox="0 0 100 100"><path d="M57 59 L82 86 L57 86 Z" fill="currentColor" opacity=".35" stroke="none"></path><path d="M22 16 L84 86" stroke-width="7.5"></path><path d="M57 18 L57 87" stroke-width="7.5"></path><path d="M71 40 L19 87" stroke-width="7.5"></path></svg><span class="logo-words"><b>Iditarod</b><span>Historic Trail Alliance</span></span></a>
+<nav aria-label="Main">
+<ul class="nav" id="nav">
+<li class="nav-item">
+<div class="nav-top"><a class="is-unlinked">Plan a Trip</a>
+<button aria-controls="menu-plan" aria-expanded="false" aria-label="Plan a Trip pages" class="nav-toggle" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></button></div>
+<ul class="nav-menu" id="menu-plan"><li><a href="trail-map.html">Interactive trail map<small>Seward to Nome, stop by stop</small></a></li><li><a class="is-unlinked">Visitor guide<small>Seasons, safety, who manages what</small></a></li><li><a class="is-unlinked">Recreation info<small>Ways to travel the trail</small></a></li><li><a class="is-unlinked">Passport program<small>Nine stamp locations</small></a></li><li><a class="is-unlinked">Auto tour<small>Drive the southern trail</small></a></li><li><a class="is-unlinked">Places to visit<small>Museums, cabins and landmarks</small></a></li><li><a class="is-unlinked">Partner sites<small>Land managers and trip planners</small></a></li></ul>
+</li>
+<li class="nav-item">
+<div class="nav-top"><a class="is-unlinked">Learn</a>
+<button aria-controls="menu-learn" aria-expanded="false" aria-label="Learn pages" class="nav-toggle" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></button></div>
+<ul class="nav-menu" id="menu-learn"><li><a class="is-unlinked">Explore the history<small>From Native trails to the serum run</small></a></li><li><a class="is-unlinked">Records &amp; stories<small>Diaries, documents and photographs</small></a></li><li><a class="is-unlinked">Project Jukebox<small>Oral histories of the trail</small></a></li><li><a class="is-unlinked">INHT books<small>Available through the store</small></a></li><li><a class="is-unlinked">For kids<small>Become a Junior Trailblazer</small></a></li><li><a class="is-unlinked">For educators<small>iTREC! and professional development</small></a></li></ul>
+</li>
+<li class="nav-item">
+<div class="nav-top"><a class="is-unlinked">Get Involved</a>
+<button aria-controls="menu-involved" aria-expanded="false" aria-label="Get Involved pages" class="nav-toggle" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></button></div>
+<ul class="nav-menu" id="menu-involved"><li><a class="is-unlinked">Grants<small>Support for trail communities</small></a></li><li><a class="is-unlinked">Gateway communities<small>The towns and villages on the trail</small></a></li><li><a class="is-unlinked">Stewardship work<small>Projects and volunteering</small></a></li><li><a class="is-unlinked">Workshops<small>Training and gatherings</small></a></li><li><a class="is-unlinked">Donate<small>Give once or monthly</small></a></li><li><a class="is-unlinked">Membership<small>Join or renew</small></a></li></ul>
+</li>
+<li class="nav-item">
+<div class="nav-top"><a class="is-unlinked">About Us</a>
+<button aria-controls="menu-about" aria-expanded="false" aria-label="About Us pages" class="nav-toggle" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></button></div>
+<ul class="nav-menu" id="menu-about"><li><a class="is-unlinked">Staff &amp; board<small>Who runs the Alliance</small></a></li><li><a class="is-unlinked">Annual reports &amp; newsletters<small>The Tripod and yearly reports</small></a></li><li><a class="is-unlinked">Partners<small>Agencies and trail groups</small></a></li><li><a class="is-unlinked">Media package<small>Facts, logos and photos</small></a></li><li><a class="is-unlinked">Contact us<small>Email, mail and social</small></a></li></ul>
+</li>
+<li class="nav-item">
+<div class="nav-top"><a class="is-unlinked">Store</a>
+<button aria-controls="menu-store" aria-expanded="false" aria-label="Store pages" class="nav-toggle" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></button></div>
+<ul class="nav-menu" id="menu-store"><li><a class="is-unlinked">Merchandise<small>Posters, patches, pins, maps</small></a></li><li><a class="is-unlinked">Books &amp; media<small>Histories and reports</small></a></li><li><a class="is-unlinked">Donations<small>Support the trail</small></a></li><li><a class="is-unlinked">Membership<small>From $10 a year</small></a></li></ul>
+</li>
+<li class="nav-mobile-cta"><a class="is-unlinked btn btn--gold">Donate <svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></a></li>
+</ul>
+</nav>
+<div class="header-right">
+<button aria-label="Search the site" class="icon-btn" id="searchOpen" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></button>
+<a aria-label="Cart" class="icon-btn" data-cart-label="" data-open-cart="" href="#"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M3 4h2.2l2.3 11.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6.1"></path><circle cx="9.5" cy="20" r="1.3"></circle><circle cx="17.5" cy="20" r="1.3"></circle></svg><span class="cart-count" hidden="">0</span></a>
+<a class="is-unlinked btn btn--gold">Donate</a>
+<button aria-controls="nav" aria-expanded="false" aria-label="Open menu" class="burger" id="burger" type="button"><span></span></button>
+</div>
+</div>
+</header>
+<div aria-label="Search the site" aria-modal="true" class="search-panel" hidden="" id="searchPanel" role="dialog">
+<button class="close icon-btn" id="searchClose" type="button"><span class="close-label">Close</span><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 4l16 16M20 4 4 20"></path></svg></button>
+<form onsubmit="return false" role="search">
+<label class="sr-only" for="searchInput">Search the site</label>
+<input aria-autocomplete="list" aria-controls="searchResults" aria-expanded="true" autocomplete="off" id="searchInput" placeholder="Search places, history, programs…" role="combobox" type="search"/>
+</form>
+<div aria-label="Search results" class="search-results" id="searchResults" role="listbox"></div>
+</div>
+<main id="main" tabindex="-1">
+<section aria-label="Welcome" class="hero" id="top">
+<div class="hero-media"><div class="hero-slide is-active" data-credit="Photo: Kevin Keeler, BLM (public domain)"><img alt="The Iditarod Trail blazed through fresh powder between snow-loaded spruce" fetchpriority="high" src="assets/img/hero-spruce.jpg"/></div><div class="hero-slide" data-credit="Photo: Bureau of Land Management (public domain)"><img alt="Pink alpenglow over a snowy mountain range" loading="lazy" src="assets/img/hero-alpenglow.jpg"/></div><div class="hero-slide" data-credit="Photo: Bureau of Land Management (public domain)"><img alt="A dog team crossing wind-packed snow below distant mountains" loading="lazy" src="assets/img/hero-sea-ice.jpg"/></div></div>
+<div aria-hidden="true" class="hero-overlay"></div>
+<div class="container">
+<span class="hero-kicker">The Iditarod National Historic Trail</span>
+<h1 class="hero-title">Seward to Nome — <br/>the trail for <br/>all seasons</h1>
+<p class="hero-lede">America’s only winter National Historic Trail: 2,400 miles of trails linking Alaska Native travel routes,
+      gold-rush roadhouses and the communities that still depend on them.</p>
+<div class="btn-row"><a class="btn-solid" href="trail-map.html">Explore the trail map <svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></a>
+<a class="btn btn--ghost" href="#this-is-the-inht">This is the INHT</a>
+</div>
+</div>
+<p class="hero-credit" id="heroCaption">Photo: Kevin Keeler, BLM (public domain)</p>
+<div aria-label="Background photo" class="hero-bars" role="group"><button aria-current="true" aria-label="Show photo 1 of 3" type="button"><b></b></button><button aria-current="false" aria-label="Show photo 2 of 3" type="button"><b></b></button><button aria-current="false" aria-label="Show photo 3 of 3" type="button"><b></b></button></div>
+<div class="hero-controls"><button aria-pressed="false" class="hero-pause" id="heroPause" type="button">
+<svg aria-hidden="true" class="ico-pause" fill="currentColor" viewbox="0 0 24 24"><rect height="14" rx="1" width="4" x="6" y="5"></rect><rect height="14" rx="1" width="4" x="14" y="5"></rect></svg>
+<svg aria-hidden="true" class="ico-play" fill="currentColor" style="display:none" viewbox="0 0 24 24"><path d="M7 4v16l13-8Z"></path></svg>
+<span>Pause</span><span class="sr-only"> slideshow</span></button></div>
+<p aria-live="polite" class="sr-only" id="heroLive"></p>
+</section>
+<section aria-labelledby="annTitle" class="announce" id="announcements">
+<div class="container announce-grid">
+<h2 id="annTitle"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"></path></svg> Announcements</h2>
+<div class="ann"><span>Newsletter</span>The Fall 2026 issue of The Tripod is out</div>
+<div class="ann"><span>Annual report</span>Read the FY25 Annual Report</div>
+<div class="ann"><span>Trail planning</span><a href="https://www.blm.gov/programs/national-conservation-lands/national-scenic-and-historic-trails/iditarod" rel="noopener" target="_blank">BLM is revising the 1986 trail plan<span class="sr-only"> (opens in a new tab)</span></a></div>
+</div>
+</section>
+<div id="this-is-the-inht">
+<section aria-labelledby="introTitle" class="intro-band">
+<div class="container">
+<h2 class="sec-title reveal" id="introTitle">This is the<br/>Iditarod Trail</h2>
+<p class="sec-sub reveal" data-d="1">Not one path but a system of winter trails — some first worn by Alaska Native travelers, others blazed for the
+      gold rush, all of them still in use. Here it is in four parts.</p>
+<nav aria-label="On this page" class="chapter-chips reveal"><a href="#uses"><b>1</b>Multiple uses</a><a href="#explore"><b>2</b>Locations &amp; landscapes</a>
+<a href="#history-strip"><b>3</b>History</a><a href="#communities"><b>4</b>Communities</a></nav>
+</div>
+</section>
+<section aria-labelledby="usesTitle" class="section" id="uses">
+<div class="container">
+<div class="sec-head">
+<h2 class="sec-title reveal" id="usesTitle">A trail for<br/>every season</h2>
+<p class="sec-sub reveal" data-d="1">Mushers, skiers, riders and hikers share the Iditarod with village residents traveling to hunt, fish, trade and visit.</p>
+</div>
+<div class="cat-grid"><div class="cat-card reveal" data-d="0"><svg aria-hidden="true" class="cat-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" viewbox="0 0 48 48"><path d="M4 34h26l4-6"></path><path d="M12 34l3-8h8"></path><circle cx="37" cy="12" r="3"></circle><path d="M36 16l-2 8 4 4M34 24l-6 2"></path><path d="M6 28c2-3 5-3 6 0M16 28c2-3 5-3 6 0"></path><path d="M44 34h-6"></path></svg><h3>Dog mushing</h3></div><div class="cat-card reveal" data-d="1"><img alt="" class="cat-icon" height="48" loading="lazy" src="assets/icons/trails.svg" width="48"/><h3>Winter &amp; summer trails</h3></div><div class="cat-card reveal" data-d="2"><img alt="" class="cat-icon" height="48" loading="lazy" src="assets/icons/camping.svg" width="48"/><h3>Shelter cabins &amp; camping</h3></div><div class="cat-card reveal" data-d="3"><img alt="" class="cat-icon" height="48" loading="lazy" src="assets/icons/boating.svg" width="48"/><h3>River travel in summer</h3></div><div class="cat-card reveal" data-d="0"><img alt="" class="cat-icon" height="48" loading="lazy" src="assets/icons/fishing.svg" width="48"/><h3>Subsistence &amp; village travel</h3></div><div class="cat-card reveal" data-d="1"><img alt="" class="cat-icon" height="48" loading="lazy" src="assets/icons/birds.svg" width="48"/><h3>Wildlife watching</h3></div><div class="cat-card reveal" data-d="2"><img alt="" class="cat-icon" height="48" loading="lazy" src="assets/icons/waterfalls.svg" width="48"/><h3>Crow Pass &amp; the Chugach</h3></div></div>
+</div>
+</section>
+<section aria-labelledby="exploreTitle" class="explore" id="explore">
+<div class="container"><div class="sec-head">
+<h2 class="sec-title reveal" id="exploreTitle">Tidewater<br/>to tundra</h2>
+<p class="sec-sub reveal" data-d="1">From Resurrection Bay over the Chugach and the Alaska Range, across the Interior and the Yukon to the Bering Sea coast at Nome.</p>
+</div></div>
+<svg aria-hidden="true" focusable="false" height="0" style="position:absolute" width="0"><defs>
+<clippath clippathunits="objectBoundingBox" id="galleryArc"><path d="M0,0 C0.26,0.055 0.74,0.055 1,0 L1,1 C0.74,0.945 0.26,0.945 0,1 Z"></path></clippath></defs></svg>
+<div aria-label="Landscapes along the trail. Use the left and right arrow keys to browse." aria-roledescription="carousel" class="stage" id="stage" role="group" tabindex="0">
+<div class="stage-inner" id="stageInner"><figure class="slide3d"><img alt="Mile 0 · Seward" draggable="false" src="assets/img/seward-statue.jpg" style="object-position:50% 45%"/><figcaption>Mile 0 · Seward</figcaption></figure><figure class="slide3d"><img alt="Crow Pass · Chugach Mountains" draggable="false" src="assets/img/crow-pass.jpg" style="object-position:50% 50%"/><figcaption>Crow Pass · Chugach Mountains</figcaption></figure><figure class="slide3d"><img alt="Alaska Range" draggable="false" src="assets/img/hero-alpenglow.jpg" style="object-position:50% 60%"/><figcaption>Alaska Range</figcaption></figure><figure class="slide3d"><img alt="Kaltag Portage" draggable="false" src="assets/img/trail-mountain.jpg" style="object-position:50% 50%"/><figcaption>Kaltag Portage</figcaption></figure><figure class="slide3d"><img alt="Near Unalakleet" draggable="false" src="assets/img/musher-dusk.jpg" style="object-position:60% 50%"/><figcaption>Near Unalakleet</figcaption></figure><figure class="slide3d"><img alt="Mile 0 · Seward" draggable="false" src="assets/img/seward-statue.jpg" style="object-position:50% 45%"/><figcaption>Mile 0 · Seward</figcaption></figure><figure class="slide3d"><img alt="Crow Pass · Chugach Mountains" draggable="false" src="assets/img/crow-pass.jpg" style="object-position:50% 50%"/><figcaption>Crow Pass · Chugach Mountains</figcaption></figure><figure class="slide3d"><img alt="Alaska Range" draggable="false" src="assets/img/hero-alpenglow.jpg" style="object-position:50% 60%"/><figcaption>Alaska Range</figcaption></figure><figure class="slide3d"><img alt="Kaltag Portage" draggable="false" src="assets/img/trail-mountain.jpg" style="object-position:50% 50%"/><figcaption>Kaltag Portage</figcaption></figure><figure class="slide3d"><img alt="Near Unalakleet" draggable="false" src="assets/img/musher-dusk.jpg" style="object-position:60% 50%"/><figcaption>Near Unalakleet</figcaption></figure></div>
+</div>
+<div class="stage-nav">
+<button aria-controls="stageInner" aria-label="Previous landscape" class="nav-round" id="galPrev" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m14 6-6 6 6 6"></path></svg></button>
+<button aria-controls="stageInner" aria-label="Next landscape" class="nav-round is-dark" id="galNext" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m10 6 6 6-6 6"></path></svg></button>
+</div>
+<p aria-live="polite" class="sr-only" id="galLive"></p>
+</section>
+<section aria-labelledby="routeTitle" class="section" id="route">
+<div class="container">
+<div class="sec-head">
+<h2 class="sec-title reveal" id="routeTitle">Where the<br/>trail runs</h2>
+<p class="sec-sub reveal" data-d="1">A thousand miles of main trail and 1,400 miles of connecting trails, crossing the lands of ten public managers and many private owners.</p>
+</div>
+<div class="route-wrap reveal">
+<div class="route-map"><div aria-label="Map of the trail from Seward to Nome. Every community is also listed on the Gateway Communities page." class="map" id="homeMap" role="region"></div></div>
+<div class="route-side">
+<ul class="route-legend">
+<li><i></i>Kenai Peninsula<b>Seward · Moose Pass</b></li>
+<li><i></i>Cook Inlet<b>Girdwood → Skwentna</b></li>
+<li><i></i>Alaska Range<b>Rainy Pass · Rohn</b></li>
+<li><i></i>Kuskokwim &amp; Innoko<b>McGrath → Iditarod</b></li>
+<li><i></i>Yukon<b>Kaltag</b></li>
+<li><i></i>Norton Sound<b>Unalakleet → Nome</b></li>
+</ul>
+<p class="route-total"><b>Main trail</b><span>About 1,000 miles, Seward to Nome</span></p>
+<a class="btn btn--brand" href="trail-map.html">Travel it stop by stop <svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></a>
+<p class="route-note">Route shown is approximate, after BLM. Imagery © Esri.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<section aria-labelledby="histTitle" class="section section--cream" id="history-strip">
+<div class="container"><div class="sec-head">
+<h2 class="sec-title reveal" id="histTitle">The last great<br/>gold rush trail</h2>
+<p class="sec-sub reveal" data-d="1">“If you love the grandeur of nature … then take the trip by all means; you will not be disappointed.” — C. K. Snow, Seward, 1919</p>
+</div></div>
+<div aria-label="Moments in trail history. Drag or use the arrow keys to browse." aria-roledescription="carousel" class="events-viewport" id="eventsViewport" role="group" tabindex="0">
+<ol class="events-track" id="eventsTrack"><li class="event-card"><div class="thumb"><img alt="" draggable="false" loading="lazy" src="assets/img/kaltag-portage-sketch.jpg"/></div>
+<div class="event-body"><p class="event-month">Since</p><p class="event-day">Long ago</p><h3 class="event-title">Native travel routes connect villages and trade centers</h3><p class="event-loc"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Statewide</p></div>
+</li><li class="event-card"><div class="thumb"><img alt="" draggable="false" loading="lazy" src="assets/img/musher-cabin.jpg"/></div>
+<div class="event-body"><p class="event-month">Russian era</p><p class="event-day">1840s</p><h3 class="event-title">Traders cross the Kaltag Portage to Nulato</h3><p class="event-loc"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Kaltag Portage</p></div>
+</li><li class="event-card"><div class="thumb"><img alt="" draggable="false" loading="lazy" src="assets/img/habs-cape-nome-beach.jpg"/></div>
+<div class="event-body"><p class="event-month">Gold rush</p><p class="event-day">1898</p><h3 class="event-title">The Anvil Creek strike turns Nome into a tent city</h3><p class="event-loc"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Nome</p></div>
+</li><li class="event-card"><div class="thumb"><img alt="" draggable="false" loading="lazy" src="assets/img/trail-spruce.jpg"/></div>
+<div class="event-body"><p class="event-month">Jan – Apr</p><p class="event-day">1908</p><h3 class="event-title">Walter Goodwin blazes a winter route from Seward</h3><p class="event-loc"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Seward to Nome</p></div>
+</li><li class="event-card"><div class="thumb"><img alt="" draggable="false" loading="lazy" src="assets/img/habs-dexter.jpg"/></div>
+<div class="event-body"><p class="event-month">Stampede</p><p class="event-day">1910</p><h3 class="event-title">10,000 head for the Iditarod and Ruby gold fields</h3><p class="event-loc"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Iditarod district</p></div>
+</li><li class="event-card"><div class="thumb"><img alt="" draggable="false" loading="lazy" src="assets/img/mail-team-seward.jpg"/></div>
+<div class="event-body"><p class="event-month">Winter mail</p><p class="event-day">1914</p><h3 class="event-title">First mail contract from Seward to Iditarod</h3><p class="event-loc"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Seward</p></div>
+</li><li class="event-card"><div class="thumb"><img alt="" draggable="false" loading="lazy" src="assets/img/hero-night.jpg"/></div>
+<div class="event-body"><p class="event-month">Serum run</p><p class="event-day">1925</p><h3 class="event-title">Twenty mushers relay serum 674 miles to Nome</h3><p class="event-loc"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Nenana to Nome</p></div>
+</li><li class="event-card"><div class="thumb"><img alt="" draggable="false" loading="lazy" src="assets/img/race-start.jpg"/></div>
+<div class="event-body"><p class="event-month">March</p><p class="event-day">1973</p><h3 class="event-title">The first Iditarod Trail Sled Dog Race</h3><p class="event-loc"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Anchorage to Nome</p></div>
+</li><li class="event-card"><div class="thumb"><img alt="" draggable="false" loading="lazy" src="assets/img/tripod-marker.jpg"/></div>
+<div class="event-body"><p class="event-month">Congress</p><p class="event-day">1978</p><h3 class="event-title">Designated a National Historic Trail</h3><p class="event-loc"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>National Trails System</p></div>
+</li><li class="event-card"><div class="thumb"><img alt="" draggable="false" loading="lazy" src="assets/img/board-meeting.jpg"/></div>
+<div class="event-body"><p class="event-month">The Alliance</p><p class="event-day">1999</p><h3 class="event-title">The Iditarod Historic Trail Alliance is founded</h3><p class="event-loc"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Anchorage</p></div>
+</li></ol>
+</div>
+<div class="events-hint"><span>Drag to travel through time</span>
+<button aria-label="Earlier moments" id="evPrev" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m14 6-6 6 6 6"></path></svg></button>
+<button aria-label="Later moments" id="evNext" type="button"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="m10 6 6 6-6 6"></path></svg></button></div>
+</section>
+<section aria-labelledby="commTitle" class="section section--tight" id="communities">
+<div class="container"><div class="sec-head">
+<h2 class="sec-title reveal" id="commTitle">The communities<br/>on the trail</h2>
+<p class="sec-sub reveal" data-d="1">Local Trail Blazers groups, village and Tribal governments and volunteers mark, clear and travel the trail every winter.</p>
+</div></div>
+<div class="community-grid"><div class="ig-item reveal" style="grid-column:span 4"><img alt="" loading="lazy" src="assets/img/seward-statue-tall.jpg"/><span class="ig-ov">Seward — where the trail begins</span></div><div class="ig-item reveal" style="grid-column:span 2"><img alt="" loading="lazy" src="assets/img/chugach-valley.jpg"/><span class="ig-ov">Eagle River</span></div><div class="ig-item reveal" style="grid-column:span 3"><img alt="" loading="lazy" src="assets/img/fireweed.jpg"/><span class="ig-ov">Eklutna, a Dena’ina village</span></div><div class="ig-item reveal" style="grid-column:span 3"><img alt="" loading="lazy" src="assets/img/team-forest.jpg"/><span class="ig-ov">Knik — mushing heritage</span></div><div class="ig-item reveal" style="grid-column:span 3"><img alt="" loading="lazy" src="assets/img/dogs-resting.jpg"/><span class="ig-ov">McGrath, on the Kuskokwim</span></div><div class="ig-item reveal" style="grid-column:span 3"><img alt="" loading="lazy" src="assets/img/musher-cabin.jpg"/><span class="ig-ov">Kaltag and the portage</span></div><div class="ig-item reveal" style="grid-column:span 2"><img alt="" loading="lazy" src="assets/img/snowmachine-sunset.jpg"/><span class="ig-ov">Unalakleet</span></div><div class="ig-item reveal" style="grid-column:span 4"><img alt="" loading="lazy" src="assets/img/habs-solomon.jpg"/><span class="ig-ov">Solomon Roadhouse</span></div></div>
+<div class="container"></div>
+</section>
+<section aria-labelledby="shopTitle" class="section accessories" id="features">
+<div class="container">
+<div class="sec-head">
+<h2 class="sec-title reveal" id="shopTitle">From the<br/>trail store</h2>
+<p class="sec-sub reveal" data-d="1">Books, patches, pins and Jon Van Zyle’s commemorative poster. Every purchase supports the trail.</p>
+</div>
+<div class="acc-grid"><div class="acc-item reveal" data-d="0"><div aria-hidden="true" class="acc-circle" tabindex="-1"><img alt="" loading="lazy" src="assets/img/store/poster-van-zyle.jpg"/></div><h3>Van Zyle poster</h3></div><div class="acc-item reveal" data-d="1"><div aria-hidden="true" class="acc-circle" tabindex="-1"><img alt="" loading="lazy" src="assets/img/store/patch.jpg"/></div><h3>Trail patch</h3></div><div class="acc-item reveal" data-d="2"><div aria-hidden="true" class="acc-circle" tabindex="-1"><img alt="" loading="lazy" src="assets/img/store/trail-lovers-pack.jpg"/></div><h3>Books &amp; DVD</h3></div></div>
+</div>
+</section>
+<section aria-labelledby="tipsTitle" class="section" id="tips">
+<div class="container">
+<div class="sec-head">
+<h2 class="sec-title reveal" id="tipsTitle">Before<br/>you go</h2>
+<p class="sec-sub reveal" data-d="1">Most of the Iditarod is remote winter country. A few rules keep you, the trail and its history safe.</p>
+</div>
+<div class="tips-cols" id="tipsCols"><div class="tip reveal" data-d="0"><svg aria-hidden="true" fill="none" stroke="#2f7d46" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M6 3.5h8l4 4v13h-12z"></path><path d="M14 3.5v4h4"></path><path d="m9 14 2 2 4-4"></path></svg><span><span class="sr-only">Do: </span>Check conditions with the land manager first</span></div><div class="tip reveal" data-d="1"><svg aria-hidden="true" fill="none" stroke="#b3261e" stroke-linecap="round" stroke-width="1.8" viewbox="0 0 24 24"><rect height="17" rx="3" width="17" x="3.5" y="3.5"></rect><path d="m9 9 6 6M15 9l-6 6"></path></svg><span><span class="sr-only">Don’t: </span>Never assume river ice is safe</span></div><div class="tip reveal" data-d="2"><svg aria-hidden="true" fill="none" stroke="#2f7d46" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M6 3.5h8l4 4v13h-12z"></path><path d="M14 3.5v4h4"></path><path d="m9 14 2 2 4-4"></path></svg><span><span class="sr-only">Do: </span>Dog teams have the right of way</span></div><div class="tip reveal" data-d="0"><svg aria-hidden="true" fill="none" stroke="#2f7d46" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M6 3.5h8l4 4v13h-12z"></path><path d="M14 3.5v4h4"></path><path d="m9 14 2 2 4-4"></path></svg><span><span class="sr-only">Do: </span>Tell someone your route and return date</span></div><div class="tip reveal" data-d="1"><svg aria-hidden="true" fill="none" stroke="#b3261e" stroke-linecap="round" stroke-width="1.8" viewbox="0 0 24 24"><rect height="17" rx="3" width="17" x="3.5" y="3.5"></rect><path d="m9 9 6 6M15 9l-6 6"></path></svg><span><span class="sr-only">Don’t: </span>Do not camp on private or Native land without permission</span></div><div class="tip reveal" data-d="2"><svg aria-hidden="true" fill="none" stroke="#2f7d46" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M6 3.5h8l4 4v13h-12z"></path><path d="M14 3.5v4h4"></path><path d="m9 14 2 2 4-4"></path></svg><span><span class="sr-only">Do: </span>Carry gear for −40° and wind</span></div><div class="tip reveal tip--extra" data-d="0"><svg aria-hidden="true" fill="none" stroke="#b3261e" stroke-linecap="round" stroke-width="1.8" viewbox="0 0 24 24"><rect height="17" rx="3" width="17" x="3.5" y="3.5"></rect><path d="m9 9 6 6M15 9l-6 6"></path></svg><span><span class="sr-only">Don’t: </span>Leave artifacts and historic sites where they are</span></div><div class="tip reveal tip--extra" data-d="1"><svg aria-hidden="true" fill="none" stroke="#2f7d46" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M6 3.5h8l4 4v13h-12z"></path><path d="M14 3.5v4h4"></path><path d="m9 14 2 2 4-4"></path></svg><span><span class="sr-only">Do: </span>Snowmachines slow down to pass</span></div><div class="tip reveal tip--extra" data-d="2"><svg aria-hidden="true" fill="none" stroke="#2f7d46" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M6 3.5h8l4 4v13h-12z"></path><path d="M14 3.5v4h4"></path><path d="m9 14 2 2 4-4"></path></svg><span><span class="sr-only">Do: </span>Pack out everything you pack in</span></div><div class="tip reveal tip--extra" data-d="0"><svg aria-hidden="true" fill="none" stroke="#b3261e" stroke-linecap="round" stroke-width="1.8" viewbox="0 0 24 24"><rect height="17" rx="3" width="17" x="3.5" y="3.5"></rect><path d="m9 9 6 6M15 9l-6 6"></path></svg><span><span class="sr-only">Don’t: </span>Do not cross avalanche slopes after storms</span></div></div>
+<div class="tips-foot reveal"><button aria-controls="tipsCols" aria-expanded="false" class="link-cta" id="tipsToggle" type="button"><span>Read all tips</span> <svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></button>
+</div>
+</div>
+</section>
+<section aria-labelledby="involveTitle" class="section section--ice">
+<div class="container">
+<div class="sec-head"><h2 class="sec-title reveal" id="involveTitle">Keep the<br/>trail open</h2>
+<p class="sec-sub reveal" data-d="1">The Alliance is small and volunteer-powered. Members, donors and trail crews make the work possible.</p></div>
+<div class="involve">
+<div class="reveal"><img alt="" loading="lazy" src="assets/img/stewardship-talk.jpg"/><div><h3>Donate</h3><p>Fund waymarking, education and community grants.</p></div></div>
+<div class="reveal" data-d="1"><img alt="" loading="lazy" src="assets/img/husky.jpg"/><div><h3>Become a member</h3><p>From $10 a year, with The Tripod newsletter.</p></div></div>
+<div class="reveal" data-d="2"><img alt="" loading="lazy" src="assets/img/tripod-marker.jpg"/><div><h3>Passport stamps</h3><p>Collect all nine, from Seward to Nome.</p></div></div>
+</div>
+</div>
+</section>
+<section aria-labelledby="contactTitle" class="section" id="contact-us">
+<div class="container contact-strip">
+<div><h2 class="sec-title" id="contactTitle" style="font-size:clamp(26px,2.6vw,34px)">Contact us</h2>
+<p style="margin-top:12px">Questions about the trail, membership or a partnership? We are happy to help.</p>
+</div>
+<div><h3><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><rect height="14" rx="2" width="18" x="3" y="5"></rect><path d="m3 7 9 6 9-6"></path></svg> Email</h3><p><a class="text-link" href="mailto:iditarodHTA@gmail.com">iditarodHTA@gmail.com</a></p></div>
+<div><h3><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg> Mail</h3><address>3705 Arctic Blvd #272<br/>Anchorage, AK 99503-5774</address></div>
+<div><h3><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m8.6 15.4 2.2-6.6 6.6-2.2-2.2 6.6Z"></path></svg> Trail conditions</h3><p>Contact the land manager for the section you plan to travel.</p></div>
+</div>
+</section>
+</main>
+<div aria-hidden="true" class="mountain-band"><div class="mtn-layer" id="mtnFront"></div></div>
+<footer class="footer" id="footer">
+<div class="container">
+<div class="footer-top">
+<div>
+<a aria-label="Iditarod Historic Trail Alliance — home" class="logo" href="index.html"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" viewbox="0 0 100 100"><path d="M57 59 L82 86 L57 86 Z" fill="currentColor" opacity=".35" stroke="none"></path><path d="M22 16 L84 86" stroke-width="7.5"></path><path d="M57 18 L57 87" stroke-width="7.5"></path><path d="M71 40 L19 87" stroke-width="7.5"></path></svg><span class="logo-words"><b>Iditarod</b><span>Historic Trail Alliance</span></span></a>
+<p class="footer-about">A statewide nonprofit, founded in 1999, working to protect, promote and tell the story of the
+          Iditarod National Historic Trail — America’s only winter National Historic Trail.</p>
+<address class="footer-addr">3705 Arctic Blvd #272<br/>Anchorage, AK 99503-5774<br/><a href="mailto:iditarodHTA@gmail.com">iditarodHTA@gmail.com</a></address>
+<div class="footer-social"><a aria-label="Facebook — opens in a new tab" href="https://www.facebook.com/pages/Iditarod-Historic-Trail-Alliance/256283077768223" rel="noopener" target="_blank"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M14 21v-8h2.8l.4-3H14V8.2c0-.9.3-1.5 1.5-1.5H17V4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3V10H7.6v3h2.7v8Z" fill="currentColor" stroke="none"></path></svg></a><a aria-label="X (formerly Twitter) — opens in a new tab" href="https://twitter.com/IditarodHTA" rel="noopener" target="_blank"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 4l16 16M20 4 4 20"></path></svg></a><a aria-label="YouTube — opens in a new tab" href="https://www.youtube.com/channel/UC6IUgrchuWRNEVMFchfDXqA" rel="noopener" target="_blank"><svg aria-hidden="true" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15V9l5 3Z" fill="currentColor" stroke="none"></path></svg></a></div>
+</div>
+<nav aria-label="Footer" class="footer-cols"><div><h2>Plan a Trip</h2><ul><li><a href="trail-map.html">Interactive trail map</a></li><li><a class="is-unlinked">Visitor guide</a></li><li><a class="is-unlinked">Recreation info</a></li><li><a class="is-unlinked">Passport program</a></li><li><a class="is-unlinked">Auto tour</a></li><li><a class="is-unlinked">Places to visit</a></li></ul></div><div><h2>Learn</h2><ul><li><a class="is-unlinked">Explore the history</a></li><li><a class="is-unlinked">Records &amp; stories</a></li><li><a class="is-unlinked">Project Jukebox</a></li><li><a class="is-unlinked">INHT books</a></li><li><a class="is-unlinked">For kids</a></li><li><a class="is-unlinked">For educators</a></li></ul></div><div><h2>Get Involved</h2><ul><li><a class="is-unlinked">Grants</a></li><li><a class="is-unlinked">Gateway communities</a></li><li><a class="is-unlinked">Stewardship work</a></li><li><a class="is-unlinked">Workshops</a></li><li><a class="is-unlinked">Donate</a></li><li><a class="is-unlinked">Membership</a></li></ul></div><div><h2>About Us</h2><ul><li><a class="is-unlinked">Staff &amp; board</a></li><li><a class="is-unlinked">Annual reports &amp; newsletters</a></li><li><a class="is-unlinked">Partners</a></li><li><a class="is-unlinked">Media package</a></li><li><a class="is-unlinked">Contact us</a></li></ul></div><div><h2>Store</h2><ul><li><a class="is-unlinked">Merchandise</a></li><li><a class="is-unlinked">Books &amp; media</a></li><li><a class="is-unlinked">Donations</a></li><li><a class="is-unlinked">Membership</a></li></ul></div></nav>
+</div>
+<div class="footer-news">
+<div><h2>Get The Tripod in your inbox</h2>
+<p>Trail news, stewardship updates and a story from the archive — a few times a year.</p></div>
+<form class="newsletter-form" data-form="newsletter" data-subject="Newsletter sign-up">
+<div class="newsletter">
+<label class="sr-only" for="nlEmail">Email address</label>
+<input autocomplete="email" data-label="Email" id="nlEmail" name="email" placeholder="Your email address" required="" type="email"/>
+<input name="list" type="hidden" value="The Tripod newsletter"/>
+<button class="btn btn--gold" type="submit">Subscribe</button>
+</div>
+<p class="err newsletter-msg" data-for="nlEmail" role="status"></p>
+<p class="newsletter-note">We never share your address. Unsubscribe at any time.</p>
+</form>
+</div>
+<div class="footer-powered"><span>Website designed by</span>
+<a aria-label="Compunnel Digital — opens in a new tab" href="https://digital.compunnel.com" rel="noopener" target="_blank"><img alt="Compunnel Digital" height="56" src="assets/img/compunnel-digital.svg" width="132"/></a></div>
+<div class="footer-bottom">
+<div><p>© <span id="year">2026</span> Iditarod National Historic Trail, Inc., dba Iditarod Historic Trail Alliance. All rights reserved.</p>
+<p class="footer-fund">The Alliance does not discriminate on the basis of race, color, national origin, sex, disability, age or other protected status.
+          This website is funded in part through a federal financial assistance award.</p></div>
+<nav aria-label="Legal"><a class="is-unlinked">Privacy</a><a class="is-unlinked">Terms</a><a class="is-unlinked">Accessibility</a><a class="is-unlinked">Photo credits</a><a class="is-unlinked">Site map</a></nav>
+</div>
+</div>
+</footer>
+<script src="assets/js/store-data.js"></script>
+<script defer="" src="assets/js/search-index.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/unlink.js"></script>
+<script src="assets/vendor/maplibre-gl.js"></script>
+<script src="assets/js/trail-data.js"></script>
+<script src="assets/js/map-engine.js"></script>
+<script src="assets/js/home.js"></script>
+</body>
+</html>
